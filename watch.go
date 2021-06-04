@@ -7,9 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	// "time"
-
-	// "github.com/bep/debounce"
 	"github.com/fsnotify/fsnotify"
 )
 
@@ -21,10 +18,10 @@ const sourceDir = "/Users/miaoyu/Desktop/liweijia/lwj-common-frontend/lwj-react/
 const targetDir = "/Users/miaoyu/Desktop/liweijia/site-frontend/src/pages/lwj-editor"
 
 //监控目录
-func (w *Watch) watchDir(dir string) {
+func (w *Watch) watchDir(sourceDir string, targetDir string) {
 	//通过Walk来遍历目录下的所有子目录
 	// debounced := debounce.New(1000 * time.Millisecond)
-	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	filepath.Walk(sourceDir, func(path string, info os.FileInfo, err error) error {
 		//这里判断是否为目录，只需监控目录即可
 		//目录下的文件也在监控范围内，不需要我们一个一个加
 		if info.IsDir() {
@@ -84,7 +81,7 @@ func (w *Watch) watchDir(dir string) {
 						break
 					}
 					// debounced(copy)
-					copyFile(ev.Name)
+					copyFile(ev.Name, sourceDir, targetDir)
 				}
 			case err := <-w.watch.Errors:
 				{
@@ -97,15 +94,25 @@ func (w *Watch) watchDir(dir string) {
 }
 
 func main() {
+	fmt.Println(len(os.Args))
+	if len(os.Args) < 3 {
+		println("参数缺失：command + sourceDir + targetDir")
+		return
+	}
+	sourceDir := os.Args[1]
+	targetDir := os.Args[2]
+	fmt.Println(sourceDir)
+	fmt.Println(targetDir)
+
 	watch, _ := fsnotify.NewWatcher()
 	w := Watch{
 		watch: watch,
 	}
-	w.watchDir(sourceDir)
+	w.watchDir(sourceDir, targetDir)
 	select {}
 }
 
-func copyFile(name string) {
+func copyFile(name string, sourceDir string, targetDir string) {
 	if strings.Contains(name, ".umi") {
 		return
 	}
@@ -116,12 +123,12 @@ func copyFile(name string) {
 	cp.Run()
 }
 
-func copy() {
-	// fmt.Printf("删除文件：%v\n", targetDir)
-	// rm := exec.Command("rm", "-rf", targetDir)
-	// rm.Run()
-	fmt.Printf("复制文件：%v\n", sourceDir)
-	fmt.Printf("=>%v\n\n", targetDir)
-	cp := exec.Command("cp", "-R", sourceDir, targetDir)
-	cp.Run()
-}
+// func copy() {
+// 	// fmt.Printf("删除文件：%v\n", targetDir)
+// 	// rm := exec.Command("rm", "-rf", targetDir)
+// 	// rm.Run()
+// 	fmt.Printf("复制文件：%v\n", sourceDir)
+// 	fmt.Printf("=>%v\n\n", targetDir)
+// 	cp := exec.Command("cp", "-R", sourceDir, targetDir)
+// 	cp.Run()
+// }
