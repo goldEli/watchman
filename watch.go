@@ -5,9 +5,11 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"time"
+	"strings"
 
-	"github.com/bep/debounce"
+	// "time"
+
+	// "github.com/bep/debounce"
 	"github.com/fsnotify/fsnotify"
 )
 
@@ -21,7 +23,7 @@ const targetDir = "/Users/miaoyu/Desktop/liweijia/site-frontend/src/pages/lwj-ed
 //监控目录
 func (w *Watch) watchDir(dir string) {
 	//通过Walk来遍历目录下的所有子目录
-	debounced := debounce.New(1000 * time.Millisecond)
+	// debounced := debounce.New(1000 * time.Millisecond)
 	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		//这里判断是否为目录，只需监控目录即可
 		//目录下的文件也在监控范围内，不需要我们一个一个加
@@ -76,7 +78,8 @@ func (w *Watch) watchDir(dir string) {
 						fmt.Println("修改权限 : ", ev.Name)
 						break
 					}
-					debounced(copy)
+					// debounced(copy)
+					copyFile(ev.Name)
 				}
 			case err := <-w.watch.Errors:
 				{
@@ -96,6 +99,15 @@ func main() {
 	w.watchDir(sourceDir)
 	select {}
 }
+
+func copyFile(name string) {
+	fmt.Printf("复制文件：%v\n", name)
+	target := strings.Replace(name, sourceDir, targetDir, 1)
+	fmt.Printf("=>%v\n\n", target)
+	cp := exec.Command("cp", name, target)
+	cp.Run()
+}
+
 func copy() {
 	// fmt.Printf("删除文件：%v\n", targetDir)
 	// rm := exec.Command("rm", "-rf", targetDir)
