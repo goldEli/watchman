@@ -29,11 +29,16 @@ func (w *Watch) watchDir(dir string) {
 		//目录下的文件也在监控范围内，不需要我们一个一个加
 		if info.IsDir() {
 			path, err := filepath.Abs(path)
+			if strings.Contains(path, ".umi") {
+				return nil
+			}
 			if err != nil {
+				fmt.Println("监控错误 : ", path, err)
 				return err
 			}
 			err = w.watch.Add(path)
 			if err != nil {
+				fmt.Println("监控错误 : ", path, err)
 				return err
 			}
 			fmt.Println("监控 : ", path)
@@ -101,6 +106,9 @@ func main() {
 }
 
 func copyFile(name string) {
+	if strings.Contains(name, ".umi") {
+		return
+	}
 	fmt.Printf("复制文件：%v\n", name)
 	target := strings.Replace(name, sourceDir, targetDir, 1)
 	fmt.Printf("=>%v\n\n", target)
