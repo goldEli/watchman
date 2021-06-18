@@ -14,8 +14,8 @@ type Watch struct {
 	watch *fsnotify.Watcher
 }
 
-const sourceDir = "/Users/miaoyu/Desktop/liweijia/lwj-common-frontend/lwj-react/lwj-editor/src"
-const targetDir = "/Users/miaoyu/Desktop/liweijia/site-frontend/src/pages/lwj-editor"
+const sourceDir string = "/Users/miaoyu/Desktop/liweijia/lwj-common-frontend/lwj-react/lwj-editor/src"
+const targetDir string = "/Users/miaoyu/Desktop/liweijia/site-frontend/src/pages/lwj-editor"
 
 //监控目录
 func (w *Watch) watchDir(sourceDir string, targetDir string) {
@@ -93,25 +93,6 @@ func (w *Watch) watchDir(sourceDir string, targetDir string) {
 	}()
 }
 
-func main() {
-	fmt.Println(len(os.Args))
-	if len(os.Args) < 3 {
-		println("参数缺失：command + sourceDir + targetDir")
-		return
-	}
-	sourceDir := os.Args[1]
-	targetDir := os.Args[2]
-	fmt.Println(sourceDir)
-	fmt.Println(targetDir)
-
-	watch, _ := fsnotify.NewWatcher()
-	w := Watch{
-		watch: watch,
-	}
-	w.watchDir(sourceDir, targetDir)
-	select {}
-}
-
 func copyFile(name string, sourceDir string, targetDir string) {
 	if strings.Contains(name, ".umi") {
 		return
@@ -123,12 +104,43 @@ func copyFile(name string, sourceDir string, targetDir string) {
 	cp.Run()
 }
 
-// func copy() {
-// 	// fmt.Printf("删除文件：%v\n", targetDir)
-// 	// rm := exec.Command("rm", "-rf", targetDir)
-// 	// rm.Run()
-// 	fmt.Printf("复制文件：%v\n", sourceDir)
-// 	fmt.Printf("=>%v\n\n", targetDir)
-// 	cp := exec.Command("cp", "-R", sourceDir, targetDir)
-// 	cp.Run()
-// }
+func initDirs() {
+	list := [9]string{"api", "assets", "components", "core", "layouts", "models", "pages", "themes", "utils"}
+	slash := "/"
+	for _, element := range list {
+		copy(sourceDir+slash+element, targetDir+slash+element)
+	}
+}
+
+func copy(sourceDir string, targetDir string) {
+	fmt.Printf("删除文件：%v\n", targetDir)
+	rm := exec.Command("rm", "-rf", targetDir)
+	rm.Run()
+	fmt.Printf("复制文件：%v\n", sourceDir)
+	fmt.Printf("=>%v\n\n", targetDir)
+	cp := exec.Command("cp", "-R", sourceDir, targetDir)
+	cp.Run()
+}
+
+func main() {
+	fmt.Println(len(os.Args))
+	if len(os.Args) < 3 {
+		println("参数缺失：command + sourceDir + targetDir")
+		return
+	}
+	sourceDir := os.Args[1]
+	targetDir := os.Args[2]
+	fmt.Println(sourceDir)
+	fmt.Println(targetDir)
+
+	println("初始化文件夹...")
+	initDirs()
+	println("初始化文件夹结束。")
+
+	watch, _ := fsnotify.NewWatcher()
+	w := Watch{
+		watch: watch,
+	}
+	w.watchDir(sourceDir, targetDir)
+	select {}
+}
