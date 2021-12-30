@@ -14,9 +14,6 @@ type Watch struct {
 	watch *fsnotify.Watcher
 }
 
-const sourceDir string = "/Users/miaoyu/Desktop/liweijia/lwj-common-frontend/lwj-react/lwj-editor/src"
-const targetDir string = "/Users/miaoyu/Desktop/liweijia/site-frontend/src/pages/lwj-editor"
-
 //监控目录
 func (w *Watch) watchDir(sourceDir string, targetDir string) {
 	//通过Walk来遍历目录下的所有子目录
@@ -104,7 +101,7 @@ func copyFile(name string, sourceDir string, targetDir string) {
 	cp.Run()
 }
 
-func initDirs() {
+func initDirs(sourceDir string, targetDir string) {
 	list := [9]string{"api", "assets", "components", "core", "layouts", "models", "pages", "themes", "utils"}
 	slash := "/"
 	for _, element := range list {
@@ -134,7 +131,7 @@ func main() {
 	fmt.Println(targetDir)
 
 	println("初始化文件夹...")
-	initDirs()
+	initDirs(sourceDir, targetDir)
 	println("初始化文件夹结束。")
 
 	watch, _ := fsnotify.NewWatcher()
