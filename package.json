@@ -1,0 +1,27 @@
+{
+  "name": "watchman",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf ./bin/watch && cd src && go build ./watch.go && cp ./watch ../bin/watch",
+    "build-win": "rm -rf ./bin/watch.exe && cd src && env GOOS=windows GOARCH=386 go build -o watch.exe ./watch.go && cp ./watch.exe ../bin/watch.exe"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zlx362211854/watchman.git"
+  },
+  "bin": {
+    "watchman": "./bin/index.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zlx362211854/watchman/issues"
+  },
+  "homepage": "https://github.com/zlx362211854/watchman#readme"
+}
